@@ -29,6 +29,11 @@ def access_hash(update: Update, context: CallbackContext) -> int:
     return USER_ID
 
 def user_id(update: Update, context: CallbackContext) -> None:
+    # Check if the 'user_id' key exists in context.user_data
+    if 'user_id' not in context.user_data:
+        update.message.reply_text("Oops! Something went wrong. Please start the conversation again.")
+        return ConversationHandler.END
+
     # Get the provided username, access hash, and user ID
     username = context.user_data['username']
     access_hash = context.user_data['access_hash']
