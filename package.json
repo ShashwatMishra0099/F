@@ -1,0 +1,12 @@
+{
+  "name": "telegram-add-members",
+  "version": "1.0.0",
+  "description": "Telegram bot to add members to a group",
+  "main": "main.js",
+  "scripts": {
+    "start": "python main.js"
+  },
+  "dependencies": {
+    "telethon": "^1.23.0"
+  }
+}
