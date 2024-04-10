@@ -29,8 +29,8 @@ def access_hash(update: Update, context: CallbackContext) -> int:
     return USER_ID
 
 def user_id(update: Update, context: CallbackContext) -> None:
-    # Check if the 'user_id' key exists in context.user_data
-    if 'user_id' not in context.user_data:
+    # Check if the 'username', 'access_hash', and 'user_id' keys exist in context.user_data
+    if 'username' not in context.user_data or 'access_hash' not in context.user_data or 'user_id' not in context.user_data:
         update.message.reply_text("Oops! Something went wrong. Please start the conversation again.")
         return ConversationHandler.END
 
@@ -46,6 +46,12 @@ def user_id(update: Update, context: CallbackContext) -> None:
     except Exception as e:
         update.message.reply_text(f"Error adding {username} to the group: {e}")
 
+    return ConversationHandler.END
+
+def cancel(update: Update, context: CallbackContext) -> int:
+    update.message.reply_text(
+        "Operation cancelled."
+    )
     return ConversationHandler.END
 
 def cancel(update: Update, context: CallbackContext) -> int:
