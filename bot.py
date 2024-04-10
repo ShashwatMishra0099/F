@@ -1,83 +1,37 @@
-from telegram import Update, ReplyKeyboardMarkup, ReplyKeyboardRemove
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, ConversationHandler, CallbackContext
+from telethon.sync import TelegramClient
+from telethon.tl.functions.channels import InviteToChannelRequest
+from telethon.errors import FloodWaitError
 
-# Replace these placeholders with your values
-BOT_TOKEN = '6811749953:AAGdD19D6gJBAhyIATWKIai4S23so3BHXBc'
-GROUP_ID = '-1002010714711'
+# Replace these variables with your own values
+api_id = ''
+api_hash = ''
+phone_number = ''
+group_username = ''
 
-# Define states for the conversation handler
-USERNAME, ACCESS_HASH, USER_ID = range(3)
+usernames = ['username1', 'username2', 'username3']  # List of usernames to add to the group
 
-def start(update: Update, context: CallbackContext) -> int:
-    update.message.reply_text(
-        "Welcome! Please provide the username of the member you want to add:"
-    )
-    return USERNAME
+async def add_members_to_group():
+    async with TelegramClient('session_name', api_id, api_hash) as client:
+        await client.start(phone_number)
+        
+        # Get the group entity
+        try:
+            group_entity = await client.get_entity(group_username)
+        except ValueError:
+            print(f"Group '{group_username}' not found.")
+            return
 
-def username(update: Update, context: CallbackContext) -> int:
-    context.user_data['username'] = update.message.text
-    update.message.reply_text(
-        "Great! Now, please provide the access hash of the member:"
-    )
-    return ACCESS_HASH
+        # Add members to the group
+        for username in usernames:
+            try:
+                await client(InviteToChannelRequest(group_entity, [username]))
+                print(f"Added {username} to the group.")
+            except FloodWaitError as e:
+                print(f"Flood wait error: {e}")
+                return
+            except Exception as e:
+                print(f"Error adding {username} to the group: {e}")
 
-def access_hash(update: Update, context: CallbackContext) -> int:
-    context.user_data['access_hash'] = update.message.text
-    update.message.reply_text(
-        "Excellent! Finally, please provide the user ID of the member:"
-    )
-    return USER_ID
-
-def user_id(update: Update, context: CallbackContext) -> None:
-    # Check if the 'username', 'access_hash', and 'user_id' keys exist in context.user_data
-    if 'username' not in context.user_data or 'access_hash' not in context.user_data or 'user_id' not in context.user_data:
-        update.message.reply_text("Oops! Something went wrong. Please start the conversation again.")
-        return ConversationHandler.END
-
-    # Get the provided username, access hash, and user ID
-    username = context.user_data['username']
-    access_hash = context.user_data['access_hash']
-    user_id = context.user_data['user_id']
-
-    try:
-        # Add member to the group
-        context.bot.add_chat_member(chat_id=GROUP_ID, user_id=user_id, access_hash=access_hash)
-        update.message.reply_text(f"{username} added successfully to the group!")
-    except Exception as e:
-        update.message.reply_text(f"Error adding {username} to the group: {e}")
-
-    return ConversationHandler.END
-
-def cancel(update: Update, context: CallbackContext) -> int:
-    update.message.reply_text(
-        "Operation cancelled."
-    )
-    return ConversationHandler.END
-
-def cancel(update: Update, context: CallbackContext) -> int:
-    update.message.reply_text(
-        "Operation cancelled."
-    )
-    return ConversationHandler.END
-
-def main() -> None:
-    updater = Updater(BOT_TOKEN)
-    dispatcher = updater.dispatcher
-
-    conv_handler = ConversationHandler(
-        entry_points=[CommandHandler('start', start)],
-        states={
-            USERNAME: [MessageHandler(Filters.text & ~Filters.command, username)],
-            ACCESS_HASH: [MessageHandler(Filters.text & ~Filters.command, access_hash)],
-            USER_ID: [MessageHandler(Filters.text & ~Filters.command, user_id)],
-        },
-        fallbacks=[CommandHandler('cancel', cancel)],
-    )
-
-    dispatcher.add_handler(conv_handler)
-
-    updater.start_polling()
-    updater.idle()
-
-if __name__ == '__main__':
-    main()
+# Run the function to add members to the group
+with client.loop.run_until_complete(add_members_to_group()):
+    pass
