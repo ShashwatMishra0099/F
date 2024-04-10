@@ -8,7 +8,7 @@ api_hash = ''
 phone_number = ''
 group_username = ''
 
-usernames = ['username1', 'username2', 'username3']  # List of usernames to add to the group
+usernames = ['Krishbhi', 'Yash_747', 'Boss_swastik']  # List of usernames to add to the group
 
 async def add_members_to_group():
     async with TelegramClient('session_name', api_id, api_hash) as client:
