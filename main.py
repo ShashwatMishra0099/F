@@ -6,7 +6,7 @@ import asyncio
 # Replace these variables with your own values
 api_id = '29597128'
 api_hash = 'feea1340241265662aec5d75678e9573'
-phone_number = '+917510038270'
+phone_number = '+91 7510038270'
 group_username = '@speeedyyyyyyyyyy'
 
 usernames = ['Boss_swastik', 'Yash_747', 'Krishbhi']  # List of usernames to add to the group
