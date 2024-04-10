@@ -1,6 +1,7 @@
 from telethon.sync import TelegramClient
 from telethon.tl.functions.channels import InviteToChannelRequest
 from telethon.errors import FloodWaitError
+import asyncio
 
 # Replace these variables with your own values
 api_id = '29597128'
@@ -8,7 +9,7 @@ api_hash = 'feea1340241265662aec5d75678e9573'
 phone_number = '+917510038270'
 group_username = '@speeedyyyyyyyyyy'
 
-usernames = ['Krishbhi', 'Yash_747', 'Boss_swastik']  # List of usernames to add to the group
+usernames = ['Boss_swastik', 'Yash_747', 'Krishbhi']  # List of usernames to add to the group
 
 async def add_members_to_group():
     async with TelegramClient('session_name', api_id, api_hash) as client:
@@ -32,6 +33,6 @@ async def add_members_to_group():
             except Exception as e:
                 print(f"Error adding {username} to the group: {e}")
 
-# Run the function to add members to the group
-with client.loop.run_until_complete(add_members_to_group()):
-    pass
+# Create event loop and run the function to add members to the group
+loop = asyncio.get_event_loop()
+loop.run_until_complete(add_members_to_group())
